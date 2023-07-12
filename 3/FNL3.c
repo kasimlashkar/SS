@@ -1,176 +1,158 @@
+/*GRAMMER RULES ---- A ->aBa , B ->bB | @*/
+
 #include<stdio.h>
+#include<stdlib.h>
 #include<string.h>
-void main()
+
+char prod [3][10]={"A->aBa","B->bB","B->@"};
+char first[3][10]={"a","b","@"};
+char follow[3][10]={"$","a","a"};
+char table[3][4][10];
+
+char input[10];
+int top=-1;
+char stack[25];
+char curp[20];
+
+void push(char item)
 {
-char fin[10][20],st[10][20],ft[20][20],fol[20][20]; int a=0,e,i,t,b,c,n,k,l=0,j,s,m,p;
-printf("enter the no. of coordinates\n"); scanf("%d",&n);
-printf("Enter the productions in a grammar\n");
-for(i=0;i<n;i++)
-scanf("%s",st[i]);
-for(i=0;i<n;i++)
-fol[i][0]='\0';
-for(s=0;s<n;s++){
-for(i=0;i<n;i++){
-j=3;
-l=0;
-a=0;
-l1:if(!((st[i][j]>64)&&(st[i][j]<91))){
-for(m=0;m<l;m++){
-if(ft[i][m]==st[i][j])
-goto s1;
+  stack[++top]=item;
 }
-ft[i][l]=st[i][j];
-l=l+1;
-s1:j=j+1;
+void pop()
+{
+  top=top-1;
 }
-else{
-if(s>0){
-while(st[i][j]!=st[a][0]){
-a++;
+void display()
+{
+  int i;
+  for(i=top;i>=0;i--)
+  printf("%c",stack[i]);
 }
-b=0;
-while(ft[a][b]!='\0'){
-for(m=0;m<l;m++){
-if(ft[i][m]==ft[a][b])
-goto s2;
+
+int numr(char c)
+{
+  switch(c)
+  {
+    case'A':return 1;
+    case'B':return 2;
+    case'a':return 1;
+    case'b':return 2;
+    case'@':return 3;
+  }
+  return 1;
 }
-ft[i][l]=ft[a][b];
-l=l+1;
-s2:b=b+1;
-}
-}
-}
-while(st[i][j]!='\0'){
-if(st[i][j]=='|'){
-j=j+1;
-goto l1;
-}
-j=j+1;
-}
-ft[i][l]='\0';
-}
-}
-printf("FIRST pos\n");
-for(i=0;i<n;i++)
-printf("FIRST[%c]=%s\n",st[i][0],ft[i]);
-fol[0][0]='$';
-for(i=0;i<n;i++){
-k=0;
-j=3;
-if(i==0)
-l=1;
-else
-l=0;
-k1:while((st[i][0]!=st[k][j])&&(k<n)){
-if(st[k][j]=='\0'){
-k++;
-j=2;
-}
-j++;
-}
-j=j+1;
-if(st[i][0]==st[k][j-1]){
-if((st[k][j]!='|')&&(st[k][j]!='\0')){
-a=0;
-if(!((st[k][j]>64)&&(st[k][j]<91))){
-for(m=0;m<l;m++){
-if(fol[i][m]==st[k][j])
-goto q3;
-}
-q3:
-fol[i][l]=st[k][j];
-l++;
-}
-else{
-while(st[k][j]!=st[a][0]){
-a++;
-}
-p=0;
-while(ft[a][p]!='\0'){
-if(ft[a][p]!='@'){
-for(m=0;m<l;m++){
-if(fol[i][m]==ft[a][p])
-goto q2;
-}
-fol[i][l]=ft[a][p];
-l=l+1;
-}
-else
-e=1;
-q2:p++;
-}
-if(e==1){
-e=0;
-goto a1;
-}
-}
-}
-else{
-a1:c=0;
-a=0;
-while(st[k][0]!=st[a][0]){
-a++;
-}
-while((fol[a][c]!='\0')&&(st[a][0]!=st[i][0])){
-for(m=0;m<l;m++){
-if(fol[i][m]==fol[a][c])
-goto q1;
-}
-fol[i][l]=fol[a][c];
-l++;
-q1:c++;
-}
-}
-goto k1;
-}
-fol[i][l]='\0';
-}
-printf("FOLLOW pos\n");
-for(i=0;i<n;i++)
-printf("FOLLOW[%c]=%s\n",st[i][0],fol[i]);
-printf("\n");
-s=0;
-for(i=0;i<n;i++){
-j=3;
-while(st[i][j]!='\0'){
-if((st[i][j-1]=='|')||(j==3)){
-for(p=0;p<=2;p++){
-fin[s][p]=st[i][p];
-}
-t=j;
-for(p=3;((st[i][j]!='|')&&(st[i][j]!='\0'));p++){
-fin[s][p]=st[i][j];
-j++;
-}
-fin[s][p]='\0';
-if(st[i][t]=='@'){
-b=0;
-a=0;
-while(st[a][0]!=st[i][0]){
-a++;
-}
-while(fol[a][b]!='\0'){
-printf("M[%c,%c]=%s\n",st[i][0],fol[a][b],fin[s]);
-b++;
-}
-}
-else if(!((st[i][t]>64)&&(st[i][t]<91)))
-printf("M[%c,%c]=%s\n",st[i][0],st[i][t],fin[s]);
-else{
-b=0;
-a=0;
-while(st[a][0]!=st[i][3]){
-a++;
-}
-while(ft[a][b]!='\0'){
-printf("M[%c,%c]=%s\n",st[i][0],ft[a][b],fin[s]);
-b++;
-}
-}
-s++;
-}
-if(st[i][j]=='|')
-j++;
-}
-}
+
+int main()
+{
+  char c;
+  int i,j,k,n;
+  for(i=0;i<3;i++){
+    for(j=0;j<4;j++){
+      strcpy(table[i][j],"EMPTY");
+    }
+  }
+  printf("\nGrammar\n");
+
+  for(i=0;i<3;i++)
+  printf("%s\n",prod[i]);
+
+  printf("\nfirst={%s,%s,%s}",first[0],first[1],first[2]);
+  printf("\nfollow={%s,%s}\n",follow[0],follow[1]);
+  printf("\nPredictive parsing table for the given grammar :\n");
+
+  strcpy(table[0][0],"");
+  strcpy(table[0][1],"a");
+  strcpy(table[0][2],"b");
+  strcpy(table[0][3],"$");
+  strcpy(table[1][0],"A");
+  strcpy(table[2][0],"B");
+
+  for(i=0;i<3;i++)
+  {
+    if(first[i][0]!='@')
+    strcpy(table[numr(prod[i][0])][numr(first[i][0])],prod[i]);
+    else
+    strcpy(table[numr(prod[i][0])][numr(follow[i][0])],prod[i]);
+  }
+  printf("\n-------------------------------------------------------------------\n");
+  for(i=0;i<3;i++){
+    for(j=0;j<4;j++)
+    {
+      printf("%-30s",table[i][j]);
+      if(j==3) printf("\n-------------------------------------------------------------------\n");
+    }
+  }
+
+  printf("Enter the input string terminated with $ to parse:-");
+  scanf("%s",input);
+  for(i=0;input[i]!='\0';i++){
+    if((input[i]!='a')&&(input[i]!='b')&&(input[i]!='$'))
+    {
+      printf("Invalid String");
+      exit(0);
+    }
+  }
+
+	if(input[i-1]!='$')
+  {
+    printf("\n\nInput String Entered Without End Marker $");
+    exit(0);
+  }
+
+	push('$');
+  push('A');
+  i=0;
+
+	printf("\n\n");
+  printf("Stack\t Input\tAction");
+  printf("\n-------------------------------------------------------------------\n");
+
+	while(input[i]!='$'&&stack[top]!='$')
+  {
+    display();
+    printf("\t\t%s\t",(input+i));
+    if(stack[top]==input[i])
+    {
+      printf("\tMatched %c\n", input[i]);
+      pop();
+      i++;
+    }
+    else
+    {
+      if(stack[top]>=65&&stack[top]<92)
+      {
+        strcpy(curp,table[numr(stack[top])][numr(input[i])]);
+        if(!(strcmp(curp,"e")))
+        {
+          printf("\nInvalid String - Rejected\n");
+          exit(0);
+        }
+        else
+        {
+          printf("\tApply production %s\n",curp);
+          if(curp[3]=='@')
+          pop();
+          else
+          {
+            pop();
+            n=strlen(curp);
+            for(j=n-1;j>=3;j--)
+            push(curp[j]);
+          }
+        }
+      }
+    }
+  }
+
+  display();
+  printf("\t\t%s\t",(input+i));
+  printf("\n-------------------------------------------------------------------\n");
+  if(stack[top]=='$'&&input[i]=='$')
+  {
+    printf("\nValid String - Accepted\n");
+  }
+  else
+  {
+    printf("Invalid String - Rejected\n");
+  }
 }
