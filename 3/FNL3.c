@@ -1,4 +1,3 @@
-/*GRAMMER RULES ---- A ->aBa , B ->bB | @*/
 
 #include<stdio.h>
 #include<stdlib.h>
