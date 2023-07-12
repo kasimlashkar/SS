@@ -1,3 +1,4 @@
+%option noyywrap
 %{
 #include<stdio.h>
 int v=0,op=0,id=0,flag=0;
